@@ -1,13 +1,42 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
     <title>Spotify Redirect</title>
     <script>
-        // Redirige al esquema personalizado de tu aplicación
-        window.location.href = "music_alarm://callback" + window.location.hash;
+        (function () {
+            // Captura el hash devuelto por Spotify
+            var hash = window.location.hash;
+            console.log("Hash recibido:", hash);
+
+            // Construye la URL para tu app
+            var appUrl = "music_alarm://callback" + hash;
+
+            // Intenta redirigir
+            try {
+                window.location.replace(appUrl);
+
+                // Como fallback: si en 1 segundo no ha salido de esta página,
+                // mostramos un enlace manual
+                setTimeout(function () {
+                    document.body.innerHTML = `
+                            <h1>Redirección</h1>
+                            <p>Si no se abrió la app automáticamente, toca aquí:</p>
+                            <a href="${appUrl}">${appUrl}</a>
+                        `;
+                }, 1000);
+
+            } catch (err) {
+                console.error("Error al redirigir:", err);
+                document.body.innerHTML = `
+                        <h1>Redirección fallida</h1>
+                        <a href="${appUrl}">Abrir en la app</a>
+                    `;
+            }
+        })();
     </script>
 </head>
 <body>
-    <p>Redirigiendo...</p>
+    <p>Redirigiendo a la aplicación...</p>
 </body>
 </html>
